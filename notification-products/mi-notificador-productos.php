@@ -38,30 +38,33 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
     }
 
     function cargar_datos_producto() {
-        $nombres = array('Andrés', 'Diego', 'Matías', 'Joaquín', 'Nicolás', 'Felipe', 'Ignacio', 'Francisco', 'Sebastián', 'Gabriel', 'Benjamín', 'Maximiliano', 'Pedro', 'Javier', 'Cristián', 'José', 'Antonio', 'Héctor', 'Raúl', 'Ricardo', 'Isidora', 'Fernanda', 'Valentina', 'Camila', 'Constanza', 'Francisca', 'Daniela', 'Valeria', 'Antonia', 'Catalina', 'Isabella', 'Sofía', 'Fabiola', 'Carolina', 'Florencia', 'Paula', 'Macarena', 'María José', 'Alejandra', 'Claudia', 'Victoria', 'Paulina', 'Natalia', 'Margarita', 'Verónica', 'Ximena', 'Rocío'); // Array con nombres de mujer
+    $producto_id = isset($_POST['producto_id']) ? intval($_POST['producto_id']) : 0;
+
+    if ($producto_id && get_post_type($producto_id) === 'product') {
+        $nombres = array(
+            'Andrés', 'Diego', 'Matías', 'Joaquín', 'Nicolás', 'Felipe', 'Ignacio', 'Francisco',
+            'Sebastián', 'Gabriel', 'Benjamín', 'Maximiliano', 'Pedro', 'Javier', 'Cristián',
+            'José', 'Antonio', 'Héctor', 'Raúl', 'Ricardo', 'Isidora', 'Fernanda', 'Valentina',
+            'Camila', 'Constanza', 'Francisca', 'Daniela', 'Valeria', 'Antonia', 'Catalina',
+            'Isabella', 'Sofía', 'Fabiola', 'Carolina', 'Florencia', 'Paula', 'Macarena',
+            'María José', 'Alejandra', 'Claudia', 'Victoria', 'Paulina', 'Natalia',
+            'Margarita', 'Verónica', 'Ximena', 'Rocío'
+        );
         $nombre_aleatorio = $nombres[array_rand($nombres)];
 
-        $args = array(
-            'post_type' => 'product',
-            'posts_per_page' => 1,
-            'orderby' => 'rand'
+        $response = array(
+            'nombre'       => truncate_utf8(get_the_title($producto_id), 37),
+            'imagen'       => get_the_post_thumbnail_url($producto_id, 'full'),
+            'url'          => get_the_permalink($producto_id),
+            'nombre_azar'  => $nombre_aleatorio
         );
-        $query = new WP_Query($args);
-        if ($query->have_posts()) {
-            $query->the_post();
 
-            $nombre_producto = truncate_utf8(get_the_title(), 37);
-
-            $response = array(
-                'nombre' => $nombre_producto,
-                'imagen' => get_the_post_thumbnail_url(get_the_ID(), 'full'),
-                'url' => get_the_permalink(),
-                'nombre_azar' => $nombre_aleatorio
-            );
-            wp_send_json($response);
-        }
-        wp_die();
+        wp_send_json($response);
     }
+
+    wp_send_json_error('Producto no encontrado o ID inválido');
+    wp_die();
+}
     
     add_action('wp_ajax_nopriv_obtener_producto_aleatorio', 'cargar_datos_producto');
     add_action('wp_ajax_obtener_producto_aleatorio', 'cargar_datos_producto');
