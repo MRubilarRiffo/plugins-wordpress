@@ -18,7 +18,7 @@ jQuery(document).ready(function($) {
                                             '<img src="' + response.imagen + '" alt="' + response.nombre + '">' +
                                         '</div>' +
                                         '<div class="jacke-info">' +
-                                            '<p class="jacke-name">' + response.nombre_azar + ' compró</p>' +
+                                            '<p class="jacke-name"><span class="jacke-bold">' + response.nombre_azar + '</span> compró</p>' +
                                             '<p class="jacke-name-product">' + response.nombre + '</p>' +
                                             '<p class="jacke-time">Recientemente</p>' +
                                         '</div>' +
