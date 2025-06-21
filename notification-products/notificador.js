@@ -1,8 +1,12 @@
 jQuery(document).ready(function($) {
     var notificacionVisible = false;
 
+    // Obtener el ID del producto desde clase "postid-XXXXX"
+    var match = $('body').attr('class').match(/postid-(\d+)/);
+    var productoID = match ? match[1] : null;
+
     function mostrarNotificacion() {
-        if (notificacionVisible) {
+        if (notificacionVisible || !productoID) {
             return;
         }
 
@@ -10,9 +14,12 @@ jQuery(document).ready(function($) {
             url: ajaxurl,
             method: 'POST',
             data: {
-                action: 'obtener_producto_aleatorio'
+                action: 'obtener_producto_aleatorio',
+                producto_id: productoID
             },
             success: function(response) {
+                if (!response || response.success === false) return;
+
                 var notificacion = '<div class="jacke-mi-notificador" id="jacke-notificacionProducto">' +
                                         '<div class="jacke-image">' +
                                             '<img src="' + response.imagen + '" alt="' + response.nombre + '">' +
@@ -24,7 +31,7 @@ jQuery(document).ready(function($) {
                                         '</div>' +
                                    '</div>';
                 $('body').append(notificacion);
-                // Añadir evento click para redirigir
+
                 $('#jacke-notificacionProducto').on('click', function() {
                     window.location.href = response.url;
                 });
